@@ -146,13 +146,27 @@ module.exports = ClientErrorMapping = {
 
 ### style guide
 
-- node 版本: node version 使用 lastest `LTS` 版本, 目前为 `6.11.4`;
+- node 版本: node version 使用 lastest `LTS` 版本, 目前为 `6.11.4`, 使用`nvm` 作为`node version` 控制工具;
 
 - code lint 使用 `standard.js`;减少 style guide config 的分歧;
   eslint, jslint 配置要花不少功夫;
   
   
 #### code style(以下关键字或是与语言环境均指 ES6
+
+- 使用 immutablejs 控制数据对象的改变;
+
+ex:
+
+```javascript
+const { Map } = require('immutable')
+const map1 = Map({ a: 1, b: 2, c: 3 })
+const map2 = map1.set('b', 50)
+map1.get('b') + " vs. " + map2.get('b') // 2 vs. 50
+```
+
+
+
     
 - 所用文件头中使用`use strict` 标注严格模式;
 ```javascript
