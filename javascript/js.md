@@ -6,7 +6,7 @@ best practice
 - 目录结构
 
 **NOTE** : _目录结构可以根据情况变更, `Makefile`, `public` etc;
-​     
+     
         ├── .dockerignore   // build docker images 时 ignore 文件
         ├── .editorconfig   // 编辑器格式统一工具(editorconfig) 配置文件
         ├── .env            // 环境变量 require('dotenv').load()加载
@@ -1018,5 +1018,5 @@ Utils.extends(A, B) // static 继承
 
 
 
-### Node 错误处理规范：
+### JS 前后端错误和异常处理规范：
 
