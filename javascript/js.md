@@ -262,3 +262,183 @@ Utils.extends(A, B) // static 继承
 ```
 
 - 单分支 `if ... else ... ` 使用 `?:` 代替, 三目运算符需要分行, 多分支使用`switch...case..` 代替;
+
+
+## Error and exception catch
+
+### `try...catch..finally`
+
+```javascript
+const str = '{"b:100}'
+try {
+  const obj = JSON.parse(str)
+} catch(err) {
+  debug(err.message || err.stack)
+}
+```
+
+### `Promise catch`
+
+```javascript
+const catchRejectError = Promise.reject(new Error('test error'))
+catchRejectError.then().catch((err) => {
+  debug(err.message || err.stack)
+})
+
+```
+
+### `error event`
+
+```javascript
+const http  = require('http')
+const debug = require('debug')('somthing:xx')
+
+const server = http.createServer((req, res) => {
+  res.end('hello, world')
+})
+
+const port = parseInt(process.env.PORT || 3000, 10)
+const onError = (err) => debug(err.message || err.stack)
+server.listen(port)
+server.on('error', onError)
+```
+
+
+### `process uncatch error`
+
+```javascript
+const noop = function(){}
+process.on('uncaughtException', noop)
+```
+
+
+### `error in req-res loop`
+
+```javascript
+
+'use strict'
+
+try{require('dotenv').load()} catch(e) {console.log(e.message)}
+
+import http from 'http'
+import express from 'express'
+import debug from 'debug'
+
+const toString = Object.prototype.toString;
+
+const ErrMapping = {
+
+  'AUTH_ERR': {
+    errCode: 'E4001',
+    errMsg: 'auth error'
+  },
+
+  'EXISTS_ERR': {
+    errCode: 'E4002',
+    errMsg: 'source not exists'
+  },
+
+  'ACCESS_ERR': {
+    errCode: 'E4003',
+    errMsg: 'source 访问受限'
+  },
+
+  'UNKNOWN_ERR': {
+    errCode: 'E5005',
+    errMsg: '未知错误'
+  }
+}
+
+//subclass builtin Error Object
+class PreError extends Error {
+  constructor(code, message) {
+    super(code, message)
+    this.name = 'PreError'
+    this.code = code
+    this.message = message
+    const hasCaptureStackTrace = typeof Error.captureStackTrace === 'function'
+    if (hasCaptureStackTrace === true) {
+      Error.captureStackTrace(this, PreError)
+    } else {
+      this.stack = new Error(message).stack
+    }
+  }
+}
+
+const getSpecialError = (desc='UNKNOWN_ERR') => {
+  const errInfo = ErrMapping[desc];
+  return new PreError(errInfo.errCode, errInfo.errMsg)
+}
+
+const logger = debug('xinlian:www')
+
+const app = express()
+
+const router = new express.Router()
+
+router.get('/', (req, res, next) => res.json({ version: 'v1', info: process.env.HOME }))
+
+router.get('/auth', (req, res, next) => next(getSpecialError('AUTH_ERR')))
+router.get('/exists', (req, res, next) => next(getSpecialError('EXISTS_ERR')))
+router.get('/access', (req, res, next) => next(getSpecialError('ACCESS_ERR')))
+
+
+app.use('/api/v1', router)
+
+app.use((err, req, res, next) => {
+  return res.json({ code: err.code, message: err.message })
+})
+
+
+const server = http.createServer(app)
+
+const normalPort = (val) => {
+  const port = parseInt(val, 10)
+  if (isNaN(port)) return val
+  if (port > 0) return port
+  return false
+}
+
+
+
+const port = normalPort(process.env.PORT || 3000)
+
+const onError = (err) => {
+  logger(err.message || err.stack)
+  process.exit()
+}
+
+const onListening = () => {
+  logger(server.address().port)
+}
+
+server.listen(port)
+
+server.on('error', onError)
+server.on('listening', onListening)
+
+const onLoop = (err) => {
+  logger(err.message || err.stack)
+}
+
+process.on('uncaughtException', onLoop)
+```
+
+### `exception retry; example: lookup dns`
+
+```javascript
+const dns = require('dns');
+const retry = require('retry');
+ 
+function faultTolerantResolve(address, cb) {
+  const operation = retry.operation();
+  operation.attempt((currentAttempt) => {
+    dns.resolve(address, (err, addresses) => {
+      if (operation.retry(err)) { return}
+      cb(err ? operation.mainError() : null, addresses)
+    })
+  })
+}
+ 
+faultTolerantResolve('nodejs.org', (err, addresses) => {debug(err, addresses)})
+```
