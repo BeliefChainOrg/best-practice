@@ -453,6 +453,8 @@ function faultTolerantResolve(address, cb) {
 faultTolerantResolve('nodejs.org', (err, addresses) => {debug(err, addresses)})
 ```
 
+## code style detail
+
 - 属性不允许加双引号或单引号，也是为了防止关键字或标识符误用的情况
 
   ```js
