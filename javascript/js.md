@@ -6,7 +6,7 @@ best practice
 - 目录结构
 
 **NOTE** : _目录结构可以根据情况变更, `Makefile`, `public` etc;
-     
+​     
         ├── .dockerignore   // build docker images 时 ignore 文件
         ├── .editorconfig   // 编辑器格式统一工具(editorconfig) 配置文件
         ├── .env            // 环境变量 require('dotenv').load()加载
@@ -313,8 +313,13 @@ server.listen(port)
 server.on('error', onError)
 ```
 
+### error event in react
 
-### `process uncatch error`
+```javascript
+// 在 react 及 react native 中尽量减少 event 的使用
+```
+
+### process uncatch error`
 
 ```javascript
 const noop = function(){}
