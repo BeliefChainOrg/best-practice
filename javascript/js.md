@@ -6,7 +6,7 @@ best practice
 - 目录结构
 
 **NOTE** : _目录结构可以根据情况变更, `Makefile`, `public` etc;
-​     
+     
         ├── .dockerignore   // build docker images 时 ignore 文件
         ├── .editorconfig   // 编辑器格式统一工具(editorconfig) 配置文件
         ├── .env            // 环境变量 require('dotenv').load()加载
@@ -217,7 +217,7 @@ const {join} = require('path')
 let joinPath = join(__dirname, 'public')
 ```
 
-- 每行语句不得超过 *80* 字符; 
+- 每行语句不得超过 *120* 字符; 
 
 - 语句块或是函数的左大括号不换行, 右大括号需换行;
 ```javascript
