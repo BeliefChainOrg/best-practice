@@ -10,4 +10,3 @@ Further as follows:
 * Add version v1…n for updatable contracts.
 * Recommend to ```delete``` obsolete state variables for saving gas.
 * Write test case as long as possible in one ```it``` area, to avoid the potential logic pollution and confusions through multi ```it```s.
-* Use ```exception``` first rule: Even in get* functions, throw an exception when the item not found or something like not fitting the query logic, instead of returning false or empty value or error code or something else.
